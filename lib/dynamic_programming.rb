@@ -10,7 +10,13 @@ class DPProblems
 
   # Takes in a positive integer n and returns the nth Fibonacci number
   # Should run in O(n) time
-  def fibonacci(n)
+  def fibonacci(n, cache = [1, 1])
+    return 0 if n == 0
+    return cache[0] if n == 1
+    return cache[1] if n == 2
+    cache[n - 1] ||= fibonacci(n - 1, cache)
+    cache[n - 2] ||= fibonacci(n - 2, cache)
+    cache[n - 1] + cache[n - 2]
   end
 
   # Make Change: write a function that takes in an amount and a set of coins.  Return the minimum number of coins
