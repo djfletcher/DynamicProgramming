@@ -101,6 +101,7 @@ class DPProblems
   #             ['x', ' ', ' ', 'x'],
   #             ['x', 'x', ' ', 'x']]
   # and the start is [1, 1], then the shortest escape route is [[1, 1], [1, 2], [2, 2]] and thus your function should return 3.
+  DIRECTIONS = ['n', 's', 'e', 'w']
   DELTAS = {
     'n' => [-1, 0],
     's' => [1, 0],
@@ -108,15 +109,14 @@ class DPProblems
     'w' => [0, -1]
   }
 
-  DIRECTIONS = ['n', 's', 'e', 'w']
-
   def maze_escape(maze, start, cache = {})
-    if start.any? { |pos| pos == 0 || pos == maze.length - 1 || pos == maze[0].length - 1 }
+    if start.any? { |pos| pos == 0 } || start[0] == maze.length - 1 ||
+       start[1] == maze[0].length - 1
       return cache[start] = 1
     end
-    return cache[start] if cache[start] # && cache[start] < Float::INFINITY
+    return cache[start] if cache[start]
 
-    cache[start] ||= Float::INFINITY
+    cache[start] = Float::INFINITY
 
     DIRECTIONS.each do |dir|
       d = DELTAS[dir]
@@ -126,14 +126,13 @@ class DPProblems
         cache[start] = possible_dist if possible_dist < cache[start]
       end
     end
-    debugger if cache[start] > 5
 
     cache[start]
   end
 
   def valid?(square, maze)
-    if square.any? { |pos| pos < 0 || pos >= maze.length || pos >= maze[0].length } ||
-      maze[square[0]][square[1]] == 'x'
+    if square.any? { |pos| pos < 0 } || square[0] >= maze.length ||
+       square[1] >= maze[0].length || maze[square[0]][square[1]] == 'x'
       return false
     end
 
