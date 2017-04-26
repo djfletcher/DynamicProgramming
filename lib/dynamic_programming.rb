@@ -52,14 +52,72 @@ class DPProblems
   # For example, with 3 steps, your function should return [[1, 1, 1], [1, 2], [2, 1], [3]].
   # NB: this is similar to, but not the same as, make_change.  Try implementing this using the opposite
   # DP technique that you used in make_change -- bottom up if you used top down and vice versa.
-  def stair_climb(n)
+  def stair_climb(n, hops = [1, 2, 3], routes = { 0 => [[]] })
+    return routes[n] if routes[n]
+
+    hops.each do |hop|
+      next if hop > n
+      new_hops = stair_climb(n - hop, hops, routes).map { |r| r.dup << hop }
+      if routes[n]
+        routes[n] += new_hops
+      else
+        routes[n] = new_hops
+      end
+    end
+
+    routes[n]
   end
 
   # String Distance: given two strings, str1 and str2, calculate the minimum number of operations to change str1 into
   # str2.  Allowed operations are deleting a character ("abc" -> "ac", e.g.), inserting a character ("abc" -> "abac", e.g.),
   # and changing a single character into another ("abc" -> "abz", e.g.).
-  def str_distance(str1, str2)
+  def str_distance(str1, str2, cache = {})
+    return 0 if str1 == str2
+    return cache[str2] if cache[str2]
+
+    cache[str2] = Float::INFINITY
+    longer = str1.length > str2.length ? str1 : str2
+
+    longer.length.times do |i|
+      if str1[i] != str2[i]
+        debugger if str1.length > 0
+        altered = str2[0...i].to_s + str1[i].to_s + str2[i + 1..-1].to_s
+        possible_min = str_distance(str1, altered, cache) + 1
+        cache[str2] = possible_min if possible_min < cache[str2]
+      end
+    end
+
+    cache[str2]
   end
+
+  # def str_distance(str1, str2, cache = {})
+  #   return 0 if str1 == str2
+  #   return cache[str2] if cache[str2]
+  #
+  #   cache[str2] = Float::INFINITY
+  #   longer = str1.length > str2.length ? str1 : str2
+  #
+  #   longer.length.times do |i|
+  #     next if str1[i] == str2[i]
+  #     if str1.length < str2
+  #       altered = str2[0...i].to_s + str2[i + 1..-1].to_s
+  #       possible_min = str_distance(str1, altered, cache) + 1
+  #
+  #
+  #     elsif str1.length == str2.length
+  #       altered = str2[0...i].to_s + str1[i].to_s + str2[i + 1..-1].to_s
+  #       possible_min = str_distance(str1, altered, cache) + 1
+  #
+  #     else
+  #       altered = str2[0...i].to_s + str1[i].to_s + str2[i + 1..-1].to_s
+  #       possible_min = str_distance(str1, altered, cache) + 1
+  #     end
+  #     cache[str2] = possible_min if possible_min < cache[str2]
+  #   end
+  #
+  #   cache[str2]
+  # end
+
 
   # Maze Traversal: write a function that takes in a maze (represented as a 2D matrix) and a starting
   # position (represented as a 2-dimensional array) and returns the minimum number of steps needed to reach the edge of the maze (including the start).
