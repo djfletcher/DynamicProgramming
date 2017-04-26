@@ -73,50 +73,25 @@ class DPProblems
   # and changing a single character into another ("abc" -> "abz", e.g.).
   def str_distance(str1, str2, cache = {})
     return 0 if str1 == str2
-    return cache[str2] if cache[str2]
 
-    cache[str2] = Float::INFINITY
+    cache[str2] ||= Float::INFINITY
     longer = str1.length > str2.length ? str1 : str2
 
     longer.length.times do |i|
-      if str1[i] != str2[i]
-        debugger if str1.length > 0
+      next if str1[i] == str2[i]
+      if str1.length < str2.length
+        altered = str2[0...i].to_s + str2[i + 1..-1].to_s
+      elsif str1.length == str2.length
         altered = str2[0...i].to_s + str1[i].to_s + str2[i + 1..-1].to_s
-        possible_min = str_distance(str1, altered, cache) + 1
-        cache[str2] = possible_min if possible_min < cache[str2]
+      else
+        altered = str2[0...i].to_s + str1[i].to_s * 2 + str2[i + 1..-1].to_s
       end
+      possible_min = str_distance(str1, altered, cache) + 1
+      cache[str2] = possible_min if possible_min < cache[str2]
     end
 
     cache[str2]
   end
-
-  # def str_distance(str1, str2, cache = {})
-  #   return 0 if str1 == str2
-  #   return cache[str2] if cache[str2]
-  #
-  #   cache[str2] = Float::INFINITY
-  #   longer = str1.length > str2.length ? str1 : str2
-  #
-  #   longer.length.times do |i|
-  #     next if str1[i] == str2[i]
-  #     if str1.length < str2
-  #       altered = str2[0...i].to_s + str2[i + 1..-1].to_s
-  #       possible_min = str_distance(str1, altered, cache) + 1
-  #
-  #
-  #     elsif str1.length == str2.length
-  #       altered = str2[0...i].to_s + str1[i].to_s + str2[i + 1..-1].to_s
-  #       possible_min = str_distance(str1, altered, cache) + 1
-  #
-  #     else
-  #       altered = str2[0...i].to_s + str1[i].to_s + str2[i + 1..-1].to_s
-  #       possible_min = str_distance(str1, altered, cache) + 1
-  #     end
-  #     cache[str2] = possible_min if possible_min < cache[str2]
-  #   end
-  #
-  #   cache[str2]
-  # end
 
 
   # Maze Traversal: write a function that takes in a maze (represented as a 2D matrix) and a starting
@@ -126,6 +101,42 @@ class DPProblems
   #             ['x', ' ', ' ', 'x'],
   #             ['x', 'x', ' ', 'x']]
   # and the start is [1, 1], then the shortest escape route is [[1, 1], [1, 2], [2, 2]] and thus your function should return 3.
-  def maze_escape(maze, start)
+  DELTAS = {
+    'n' => [-1, 0],
+    's' => [1, 0],
+    'e' => [0, 1],
+    'w' => [0, -1]
+  }
+
+  DIRECTIONS = ['n', 's', 'e', 'w']
+
+  def maze_escape(maze, start, cache = {})
+    if start.any? { |pos| pos == 0 || pos == maze.length - 1 || pos == maze[0].length - 1 }
+      return cache[start] = 1
+    end
+    return cache[start] if cache[start] # && cache[start] < Float::INFINITY
+
+    cache[start] ||= Float::INFINITY
+
+    DIRECTIONS.each do |dir|
+      d = DELTAS[dir]
+      next_square = [d[0] + start[0], d[1] + start[1]]
+      if valid?(next_square, maze)
+        possible_dist = maze_escape(maze, next_square, cache) + 1
+        cache[start] = possible_dist if possible_dist < cache[start]
+      end
+    end
+    debugger if cache[start] > 5
+
+    cache[start]
+  end
+
+  def valid?(square, maze)
+    if square.any? { |pos| pos < 0 || pos >= maze.length || pos >= maze[0].length } ||
+      maze[square[0]][square[1]] == 'x'
+      return false
+    end
+
+    true
   end
 end
