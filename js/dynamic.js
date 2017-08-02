@@ -60,38 +60,85 @@ function matrixMax(matrix) {
 }
 
 
+// let test1 = [
+//   [1, 0, 1, 0, 1, 0],
+//   [1, 0, 1, 1, 1, 1],
+//   [0, 1, 1, 1, 1, 1],
+//   [0, 0, 1, 1, 1, 1],
+//   [1, 1, 1, 1, 1, 1]
+// ];
+//
+// let test2 = [
+//   [1, 0, 1, 0, 1, 0],
+//   [1, 0, 1, 1, 1, 0],
+//   [0, 1, 1, 1, 1, 1],
+//   [0, 0, 1, 1, 1, 1],
+//   [1, 1, 1, 1, 0, 1]
+// ];
+//
+// let test3 = [
+//   [1, 0, 1, 0, 1, 0],
+//   [1, 0, 1, 1, 1, 0],
+//   [0, 1, 1, 1, 1, 1],
+// ];
+//
+// let test4 = [];
+//
+// let test5 = [
+//   [0, 1, 1],
+//   [0, 0, 1],
+//   [0, 1, 1],
+// ];
+//
+// console.log(maxSubSize(test1) === 4);
+// console.log(maxSubSize(test2) === 3);
+// console.log(maxSubSize(test3) === 2);
+// console.log(maxSubSize(test4) === 0);
+// console.log(maxSubSize(test5) === 1);
+
+
+// Print spiral
+function printSpiral(matrix) {
+  let top, right, bottom, left, currRow, currCol, count, result;
+  top = 0;
+  right = matrix[0].length - 1;
+  bottom = matrix.length - 1;
+  left = 0;
+  currRow = 0;
+  currCol = 0;
+  result = [];
+
+  while (result.length < matrix.length * matrix[0].length) {
+    for (currCol; currCol <= right; currCol++) {
+      result.push(matrix[currRow][currCol]);
+    }
+    right -= 1;
+
+    for (currRow; currRow <= bottom; currRow++) {
+      result.push(matrix[currRow][currCol]);
+    }
+    bottom -= 1;
+
+    if (right < left) { break; }
+    for (currCol; currCol >= left; currCol--) {
+      result.push(matrix[currRow][currCol]);
+    }
+    left += 1;
+
+    if (bottom < top) { break; }
+    for (currRow; currRow >= top; currRow--) {
+      result.push(matrix[currRow][currCol]);
+    }
+    top += 1;
+  }
+
+  result.forEach(el => console.log(el));
+}
+
 let test1 = [
-  [1, 0, 1, 0, 1, 0],
-  [1, 0, 1, 1, 1, 1],
-  [0, 1, 1, 1, 1, 1],
-  [0, 0, 1, 1, 1, 1],
-  [1, 1, 1, 1, 1, 1]
+ [ 1, 2, 3 ],
+ [ 4, 5, 6 ],
+ [ 7, 8, 9 ]
 ];
 
-let test2 = [
-  [1, 0, 1, 0, 1, 0],
-  [1, 0, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1],
-  [0, 0, 1, 1, 1, 1],
-  [1, 1, 1, 1, 0, 1]
-];
-
-let test3 = [
-  [1, 0, 1, 0, 1, 0],
-  [1, 0, 1, 1, 1, 0],
-  [0, 1, 1, 1, 1, 1],
-];
-
-let test4 = [];
-
-let test5 = [
-  [0, 1, 1],
-  [0, 0, 1],
-  [0, 1, 1],
-];
-
-console.log(maxSubSize(test1) === 4);
-console.log(maxSubSize(test2) === 3);
-console.log(maxSubSize(test3) === 2);
-console.log(maxSubSize(test4) === 0);
-console.log(maxSubSize(test5) === 1);
+printSpiral(test1);
