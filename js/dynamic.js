@@ -99,40 +99,40 @@ function matrixMax(matrix) {
 
 // Print spiral
 function printSpiral(matrix) {
-  let top, right, bottom, left, currRow, currCol, count, result;
+  let top, right, bottom, left, result;
   top = 0;
   right = matrix[0].length - 1;
   bottom = matrix.length - 1;
   left = 0;
-  currRow = 0;
-  currCol = 0;
   result = [];
 
   while (result.length < matrix.length * matrix[0].length) {
-    for (currCol; currCol <= right; currCol++) {
-      result.push(matrix[currRow][currCol]);
+    if (right < left) { break; }
+    for (let col = left; col <= right; col++) {
+      result.push(matrix[top][col]);
+    }
+    top += 1;
+
+    if (bottom < top) { break; }
+    for (let row = top; row <= bottom; row++) {
+      result.push(matrix[row][right]);
     }
     right -= 1;
 
-    for (currRow; currRow <= bottom; currRow++) {
-      result.push(matrix[currRow][currCol]);
+    if (right < left) { break; }
+    for (let col = right; col >= left; col--) {
+      result.push(matrix[bottom][col]);
     }
     bottom -= 1;
 
-    if (right < left) { break; }
-    for (currCol; currCol >= left; currCol--) {
-      result.push(matrix[currRow][currCol]);
+    if (bottom < top) { break; }
+    for (let row = bottom; row >= top; row--) {
+      result.push(matrix[row][left]);
     }
     left += 1;
-
-    if (bottom < top) { break; }
-    for (currRow; currRow >= top; currRow--) {
-      result.push(matrix[currRow][currCol]);
-    }
-    top += 1;
   }
 
-  result.forEach(el => console.log(el));
+  return result;
 }
 
 let test1 = [
@@ -141,4 +141,19 @@ let test1 = [
  [ 7, 8, 9 ]
 ];
 
-printSpiral(test1);
+let test2 = [
+  [1,  2,  3,  4,  5,  6],
+  [7,  8,  9,  10, 11, 12],
+  [13, 14, 15, 16, 17, 18]
+];
+
+let test3 = [
+  [ 1, 2, 3, 4 ],
+  [ 5, 6, 7, 8 ],
+  [ 9, 10, 11, 12 ],
+  [ 13, 14, 15, 16 ]
+];
+
+console.log(printSpiral(test1)); // => [1, 2, 3, 6, 9, 8, 7, 4, 5]
+console.log(printSpiral(test2)); // => [1, 2, 3, 4, 5, 6, 12, 18, 17, 16, 15, 14, 13, 7, 8, 9, 10, 11]
+console.log(printSpiral(test3)); // => [1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10]
